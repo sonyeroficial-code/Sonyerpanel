@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comprobante</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg1:#4f1768;
+  --bg2:#6a238a;
+
+  --card:#f4f4f6;
+
+  --text:#2b2b2b;
+  --muted:#6f6f6f;
+  --label:#6a5f80;
+  --line:#e3e3e8;
+
+  --green:#18b394;
+  --yellow:#ffd600;
+  --codeBg:#e9e9ef;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+
+body{
+  min-height:100vh;
+  background:linear-gradient(180deg,var(--bg1),var(--bg2));
+  display:flex;
+  justify-content:center;
+  padding:10px 12px;
+  color:var(--text);
+}
+
+/* ✅ cuando el editor está abierto, bloquea scroll del fondo */
+body.editor-open{
+  overflow:hidden;
+  height:100vh;
+  touch-action:none;
+}
+
+.container{
+  width:100%;
+  max-width:360px;
+  position:relative;
+}
+
+/* ===== LOGO ARRIBA ===== */
+.yape-logo{
+  position:absolute;
+  top:-8px;
+  left:10px;
+  width:82px;
+  z-index:5;
+}
+.yape-logo img{
+  width:100%;
+  display:block;
+}
+
+/* ===== CARD ===== */
+.card{
+  margin-top:85px;
+  background:var(--card);
+  border-radius:26px;
+  padding:22px 20px 18px;
+  box-shadow:0 12px 34px rgba(0,0,0,.25);
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.title{
+  font-size:24px;
+  font-weight:700;
+  color:#6a238a;
+}
+
+.share{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:var(--green);
+  font-weight:700;
+  font-size:14px;
+}
+.share svg{
+  width:18px;
+  height:18px;
+  stroke:var(--green);
+  stroke-width:2;
+  fill:none;
+}
+
+/* MONTO */
+.amount{
+  margin:12px 0 6px;
+  display:flex;
+}
+.currency{
+  font-size:22px;
+  font-weight:600;
+  margin-top:10px;
+  margin-right:4px;
+}
+.number{
+  font-size:46px;
+  font-weight:600;   /* antes 700 → ahora más delgado */
+  color:#333333;     /* menos negro */
+}
+
+/* RESTO */
+.name{
+  font-size:20px;
+  font-weight:600;
+  margin-bottom:10px;
+}
+
+/* FECHA/HORA */
+.datetime{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:var(--muted);
+  font-size:14px;
+  padding-bottom:14px;
+  border-bottom:1px solid var(--line);
+}
+.datetime svg{
+  width:18px;
+  height:18px;
+  stroke:var(--muted);
+  stroke-width:2;
+  fill:none;
+}
+
+.security-row{
+  margin-top:14px;
+  padding-bottom:14px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.security-label{
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.6px;
+  color:var(--label);
+}
+
+.info-circle{
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:var(--green);
+  color:#fff;
+  font-size:12px;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.security-boxes{
+  display:flex;
+  gap:6px;
+}
+
+.code{
+  width:30px;
+  height:28px;
+  border-radius:8px;
+  background:var(--codeBg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  font-weight:600;
+}
+
+.section-title{
+  margin-top:14px;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.6px;
+  color:var(--label);
+}
+
+.data{
+  margin-top:10px;
+  font-size:16px;
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+
+/* ✅ celular MÁS GRANDE */
+#phoneText{
+  font-size:18px;
+  font-weight:900;
+  letter-spacing:.5px;
+}
+
+/* ===== MÁS EN YAPE ===== */
+.promo-wrap{
+  margin-top:18px;
+  background:linear-gradient(180deg,rgba(120,40,160,0.35),rgba(90,20,140,0.45));
+  border-radius:26px;
+  padding:14px;
+}
+
+.promo-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.promo-head .h{
+  color:#fff;
+  font-size:18px;
+  font-weight:800;
+}
+
+.promo-head .badge{
+  background:var(--yellow);
+  font-size:12px;
+  padding:6px 12px;
+  border-radius:999px;
+  font-weight:800;
+}
+
+/* ✅ borde anuncio un poco más oscuro */
+.promo-card{
+  background:#fff;
+  border-radius:20px;
+  padding:10px;
+  max-width:320px;
+  margin:0 auto;
+  border:3px solid #cfcfe6;
+  box-shadow:0 6px 14px rgba(0,0,0,0.12);
+}
+
+.promo-img{
+  width:100%;
+  height:120px;
+  border-radius:14px;
+  overflow:hidden;
+}
+
+.promo-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* ===========================
+   PANEL EDITOR + BLUR (COMPACTO)
+=========================== */
+.editor-hotspot{
+  position:fixed;
+  right:0;
+  bottom:0;
+  width:64px;
+  height:64px;
+  z-index:9997;
+  background:transparent;
+}
+
+.editor-toggle{
+  position:fixed;
+  right:14px;
+  bottom:14px;
+  z-index:9998;
+  border:none;
+  background:rgba(255,255,255,.92);
+  color:#3a3a3a;
+  border-radius:999px;
+  padding:9px 13px;
+  font-weight:900;
+  box-shadow:0 10px 28px rgba(0,0,0,.25);
+  cursor:pointer;
+  transition:opacity .2s, transform .2s;
+  font-size:13px;
+}
+.editor-toggle.soft{ opacity:.18; }
+.editor-toggle.hidden{ display:none; }
+
+.editor-overlay{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:rgba(0,0,0,.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display:none;
+}
+.editor-overlay.show{ display:block; }
+
+/* ✅ compacto + no “sube” con teclado */
+.editor{
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:12px;
+  width:min(330px, calc(100vw - 24px));
+  z-index:10000;
+  background:rgba(255,255,255,.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border:1px solid rgba(255,255,255,.55);
+  border-radius:16px;
+  box-shadow:0 16px 34px rgba(0,0,0,.30);
+  overflow:hidden;
+  display:none;
+  max-height:72vh;           /* ✅ más bajito */
+}
+.editor.show{ display:block; }
+
+.editor-body{
+  padding:10px 12px 12px;
+  display:grid;
+  gap:8px;                   /* ✅ menos espacio */
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  max-height:calc(72vh - 52px);
+}
+
+.editor-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 12px;
+  background:linear-gradient(180deg, rgba(106,35,138,.12), rgba(79,23,104,.06));
+  border-bottom:1px solid rgba(0,0,0,.06);
+}
+
+.editor-head .t{
+  font-weight:900;
+  color:#4f1768;
+  font-size:15px;
+}
+
+.editor-head .x{
+  border:none;
+  background:transparent;
+  font-size:18px;
+  cursor:pointer;
+  color:#4f1768;
+  font-weight:900;
+}
+
+.f{ display:grid; gap:5px; }
+
+.f label{
+  font-size:11px;
+  font-weight:900;
+  color:#4f1768;
+  letter-spacing:.2px;
+}
+
+.f input, .f select{
+  width:100%;
+  border:1px solid rgba(0,0,0,.12);
+  border-radius:12px;
+  padding:9px 11px;
+  font-size:13px;
+  outline:none;
+  background:#fff;
+}
+
+.row2{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:8px;
+}
+
+.editor-actions{
+  display:flex;
+  gap:8px;
+  margin-top:2px;
+  flex-wrap:wrap;
+}
+
+.btn{
+  flex:1;
+  border:none;
+  border-radius:12px;
+  padding:10px 10px;
+  font-weight:900;
+  cursor:pointer;
+  min-width:110px;
+  font-size:13px;
+}
+
+.btn-save{ background:#18b394; color:#fff; }
+.btn-reset{ background:#eee; color:#333; }
+.btn-rotate{ background:#6a238a; color:#fff; }
+.btn-shot{ background:#111; color:#fff; }
+
+.small-note{
+  font-size:11px;
+  color:#555;
+  opacity:.9;
+  margin-top:-2px;
+}
+
+.err{
+  display:none;
+  background:#ffe6ea;
+  border:1px solid #ffb3c2;
+  color:#8a0b2a;
+  padding:9px 11px;
+  border-radius:12px;
+  font-weight:800;
+  font-size:12px;
+}
+.err.show{ display:block; }
+
+.preview-mask{
+  font-size:12px;
+  font-weight:900;
+  color:#2b2b2b;
+  background:rgba(24,179,148,.10);
+  border:1px solid rgba(24,179,148,.25);
+  padding:8px 10px;
+  border-radius:12px;
+}
+
+.hide-for-shot{ display:none !important; }
+</style>
+</head>
+
+<body>
+<div class="container" id="captureArea">
+
+  <!-- LOGO -->
+  <div class="yape-logo">
+    <img src="yape-logo.png" alt="Yape" id="logoImg">
+  </div>
+
+  <!-- CARD -->
+  <div class="card">
+    <div class="header">
+      <div class="title">¡Yapeaste!</div>
+
+      <div class="share">
+        <svg viewBox="0 0 24 24">
+          <circle cx="18" cy="5" r="3"/>
+          <circle cx="6" cy="12" r="3"/>
+          <circle cx="18" cy="19" r="3"/>
+          <line x1="8.5" y1="13.5" x2="15.5" y2="17.5"/>
+          <line x1="15.5" y1="6.5" x2="8.5" y2="10.5"/>
+        </svg>
+        Compartir
+      </div>
+    </div>
+
+    <div class="amount">
+      <span class="currency">S/</span>
+      <span class="number" id="amountNumber">33</span>
+    </div>
+
+    <div class="name" id="nameText">Valeria Nav*</div>
+
+    <div class="datetime">
+      <!-- Calendario -->
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+        <line x1="16" y1="3" x2="16" y2="7"></line>
+        <line x1="8" y1="3" x2="8" y2="7"></line>
+        <line x1="3" y1="11" x2="21" y2="11"></line>
+      </svg>
+      <span id="dateText">11 feb. 2026</span>
+      |
+      <!-- Reloj -->
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"></circle>
+        <polyline points="12,7 12,12 16,14"></polyline>
+      </svg>
+      <span id="timeText">03:13 a. m.</span>
+    </div>
+
+    <div class="security-row">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="security-label">CÓDIGO DE SEGURIDAD</div>
+        <div class="info-circle">i</div>
+      </div>
+
+      <div class="security-boxes">
+        <div class="code" id="code1">4</div>
+        <div class="code" id="code2">7</div>
+        <div class="code" id="code3">1</div>
+      </div>
+    </div>
+
+    <div class="section-title">DATOS DE LA TRANSACCIÓN</div>
+
+    <div class="data">
+      <div class="row"><span>Nro. de celular</span><span id="phoneText">*** *** 566</span></div>
+      <div class="row"><span>Destino</span><span>Yape</span></div>
+      <div class="row"><span>Nro. de operación</span><span id="opNumber">01302471</span></div>
+    </div>
+  </div>
+
+  <!-- PROMO -->
+  <div class="promo-wrap">
+    <div class="promo-head">
+      <div class="h">Más en Yape</div>
+      <div class="badge">Nuevo</div>
+    </div>
+
+    <div class="promo-card">
+      <div class="promo-img">
+        <img src="promo1.png" alt="Promo" id="promoImg">
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Hotspot invisible -->
+<div class="editor-hotspot" id="hotspot"></div>
+
+<button class="editor-toggle soft" id="openEditor">Editar</button>
+
+<div class="editor-overlay" id="overlay"></div>
+
+<div class="editor" id="editor">
+  <div class="editor-head">
+    <div class="t">Dueño SonYer</div>
+    <button class="x" id="closeEditor">✕</button>
+  </div>
+
+  <div class="editor-body">
+
+    <div class="err" id="errBox">⚠️ Escribe un número válido (mínimo 3 dígitos). Se mostrará como <b>*** *** 566</b>.</div>
+
+    <div class="f">
+      <label>Nombre</label>
+      <input type="text" id="inpName" placeholder="Ej: Valeria Nav*">
+    </div>
+
+    <div class="f">
+      <label>Saldo (solo número)</label>
+      <input type="number" id="inpAmount" placeholder="Ej: 33" step="0.01" min="0">
+    </div>
+
+    <!-- ✅ Ahora escribes el número NORMAL -->
+    <div class="f">
+      <label>Nro. de celular (escribe normal)</label>
+      <input
+        type="text"
+        id="inpPhone"
+        placeholder="Ej: 995638566"
+        inputmode="numeric"
+        autocomplete="off"
+        maxlength="20"
+      >
+      <div class="small-note">Se ocultará automáticamente como <b>*** *** 566</b> (últimos 3 dígitos).</div>
+      <div class="preview-mask" id="maskPreview">Vista: *** *** 000</div>
+    </div>
+
+    <div class="row2">
+      <div class="f">
+        <label>Fecha</label>
+        <input type="date" id="inpDate">
+      </div>
+      <div class="f">
+        <label>Hora (la pones tú)</label>
+        <input type="time" id="inpTime" step="60">
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="f">
+        <label>Meridiano</label>
+        <select id="inpMeridiem">
+          <option value="am">a. m.</option>
+          <option value="pm">p. m.</option>
+        </select>
+      </div>
+
+      <div class="f">
+        <label>Nro. de operación</label>
+        <input type="text" id="inpOp" inputmode="numeric" placeholder="Ej: 01302471" maxlength="20">
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="f">
+        <label>Código (3 dígitos)</label>
+        <input type="text" id="inpCode" inputmode="numeric" placeholder="Ej: 471" maxlength="3">
+        <div class="small-note">O usa “Rotar código”.</div>
+      </div>
+
+      <div class="f">
+        <label>Ocultar botón “Editar”</label>
+        <select id="inpHideEdit">
+          <option value="no">No</option>
+          <option value="yes">Sí (se abre tocando esquina abajo der.)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="f">
+      <label>Usar fecha y hora actual (ahora)</label>
+      <select id="inpNow">
+        <option value="no">No</option>
+        <option value="yes">Sí (pone la del teléfono)</option>
+      </select>
+      <div class="small-note">Si activas “Sí”, se ignora lo escrito en Fecha/Hora.</div>
+    </div>
+
+    <div class="row2">
+      <div class="f">
+      </div>
+
+
+    </div>
+
+    <div class="editor-actions">
+      <button class="btn btn-reset" id="btnReset">Reset</button>
+      <button class="btn btn-rotate" id="btnRotate">Rotar</button>
+      <button class="btn btn-save" id="btnSave">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+
+  const nameText   = $("nameText");
+  const amountText = $("amountNumber");
+  const dateText   = $("dateText");
+  const timeText   = $("timeText");
+  const opNumber   = $("opNumber");
+  const phoneText  = $("phoneText");
+
+  const code1 = $("code1");
+  const code2 = $("code2");
+  const code3 = $("code3");
+
+  const promoImg   = $("promoImg");
+  const logoImg    = $("logoImg");
+
+  const editor     = $("editor");
+  const overlay    = $("overlay");
+  const openBtn    = $("openEditor");
+  const closeBtn   = $("closeEditor");
+  const hotspot    = $("hotspot");
+
+  const inpName    = $("inpName");
+  const inpAmount  = $("inpAmount");
+  const inpPhone   = $("inpPhone");
+  const maskPreview= $("maskPreview");
+  const inpDate    = $("inpDate");
+  const inpTime    = $("inpTime");
+  const inpMer     = $("inpMeridiem");
+  const inpOp      = $("inpOp");
+  const inpCode    = $("inpCode");
+  const inpHide    = $("inpHideEdit");
+  const inpNow     = $("inpNow");
+
+  const inpPromo   = $("inpPromoFile");
+  const inpLogo    = $("inpLogoFile");
+
+  const btnSave    = $("btnSave");
+  const btnReset   = $("btnReset");
+  const btnRotate  = $("btnRotate");
+  const btnShot    = $("btnShot");
+
+  const captureArea = $("captureArea");
+  const errBox = $("errBox");
+
+  const MONTHS_ES = ["ene.","feb.","mar.","abr.","may.","jun.","jul.","ago.","set.","oct.","nov.","dic."];
+
+  function pad2(n){ return String(n).padStart(2,"0"); }
+
+  function toSpanishDate(yyyyMmDd){
+    if(!yyyyMmDd) return "";
+    const [y,m,d] = yyyyMmDd.split("-").map(Number);
+    const mon = MONTHS_ES[(m||1)-1] || "ene.";
+    return `${d} ${mon} ${y}`;
+  }
+
+  function parseDisplayedDate(txt){
+    try{
+      const parts = txt.trim().split(/\s+/);
+      const d = Number(parts[0]);
+      const monTxt = parts[1].toLowerCase();
+      const y = Number(parts[2]);
+      const mIndex = MONTHS_ES.findIndex(x => x === monTxt);
+      const m = (mIndex >= 0 ? mIndex+1 : 1);
+      return `${y}-${pad2(m)}-${pad2(d)}`;
+    }catch(e){
+      return "";
+    }
+  }
+
+  function timeToInputValue(display){
+    const m = display.match(/(\d{1,2}):(\d{2})/);
+    if(!m) return "";
+    let hh = Number(m[1]);
+    const mm = Number(m[2]);
+    const isPM = display.includes("p. m.");
+    const isAM = display.includes("a. m.");
+    if(isPM && hh < 12) hh += 12;
+    if(isAM && hh === 12) hh = 0;
+    return `${pad2(hh)}:${pad2(mm)}`;
+  }
+
+  function currentMer(display){
+    return display.includes("p. m.") ? "pm" : "am";
+  }
+
+  function formatTime12(hhmm, mer){
+    if(!hhmm) return "";
+    let [hh, mm] = hhmm.split(":").map(Number);
+    if(Number.isNaN(hh) || Number.isNaN(mm)) return "";
+    if(hh === 0){ hh = 12; mer = "am"; }
+    else if(hh === 12){ mer = mer || "pm"; }
+    else if(hh > 12){ hh = hh - 12; mer = "pm"; }
+    else { mer = mer || "am"; }
+    return `${pad2(hh)}:${pad2(mm)} ${mer === "pm" ? "p. m." : "a. m."}`;
+  }
+
+  function setCodeFromString(s){
+    const clean = String(s || "").replace(/\D/g,"").slice(0,3);
+    const a = clean[0] ?? code1.textContent;
+    const b = clean[1] ?? code2.textContent;
+    const c = clean[2] ?? code3.textContent;
+    code1.textContent = a;
+    code2.textContent = b;
+    code3.textContent = c;
+    return `${a}${b}${c}`;
+  }
+
+  function random3(){
+    return String(Math.floor(Math.random()*1000)).padStart(3,"0");
+  }
+
+  function readFileAsDataURL(file){
+    return new Promise((res, rej) => {
+      const fr = new FileReader();
+      fr.onload = () => res(fr.result);
+      fr.onerror = rej;
+      fr.readAsDataURL(file);
+    });
+  }
+
+  function persist(state){
+    localStorage.setItem("yape_editor_state", JSON.stringify(state));
+  }
+
+  /* ✅ máscara: escribes normal y mostramos *** *** 566 */
+  function maskPhoneFromAny(inputValue){
+    const digits = String(inputValue || "").replace(/\D/g,"");
+    const last3 = digits.slice(-3);
+    const out = (last3.length === 3) ? last3 : last3.padStart(3,"0");
+    return `*** *** ${out}`;
+  }
+
+  function validPhoneMin3(inputValue){
+    const digits = String(inputValue || "").replace(/\D/g,"");
+    return digits.length >= 3;
+  }
+
+  function loadPersisted(){
+    try{
+      const raw = localStorage.getItem("yape_editor_state");
+      if(!raw) return;
+      const s = JSON.parse(raw);
+
+      if(s.name) nameText.textContent = s.name;
+      if(typeof s.amount === "string") amountText.textContent = s.amount;
+      if(s.date) dateText.textContent = s.date;
+      if(s.time) timeText.textContent = s.time;
+      if(s.op) opNumber.textContent = s.op;
+
+      if(s.phoneMasked) phoneText.textContent = s.phoneMasked;
+
+      if(s.code) setCodeFromString(s.code);
+
+      if(s.promoDataUrl) promoImg.src = s.promoDataUrl;
+      if(s.logoDataUrl) logoImg.src = s.logoDataUrl;
+
+      if(s.hideEdit === "yes"){
+        openBtn.classList.add("hidden");
+      }else{
+        openBtn.classList.remove("hidden");
+      }
+
+      if(s.useNow){
+        inpNow.value = s.useNow;
+      }
+    }catch(e){}
+  }
+
+  function resetAll(){
+    localStorage.removeItem("yape_editor_state");
+    location.reload();
+  }
+
+  function openEditor(){
+    errBox.classList.remove("show");
+
+    inpName.value = nameText.textContent.trim();
+    inpAmount.value = Number(String(amountText.textContent).trim().replace(",", ".")) || "";
+
+    // ✅ aquí el panel guarda el número “normal” (si existe), si no, vacío
+    inpPhone.value = "";
+    maskPreview.textContent = "Vista: " + maskPhoneFromAny(phoneText.textContent);
+
+    inpDate.value = parseDisplayedDate(dateText.textContent);
+    inpTime.value = timeToInputValue(timeText.textContent);
+    inpMer.value = currentMer(timeText.textContent);
+    inpOp.value = opNumber.textContent.trim();
+    inpCode.value = `${code1.textContent}${code2.textContent}${code3.textContent}`;
+    inpHide.value = openBtn.classList.contains("hidden") ? "yes" : "no";
+
+    document.body.classList.add("editor-open");
+    overlay.classList.add("show");
+    editor.classList.add("show");
+  }
+
+  function closeEditor(){
+    overlay.classList.remove("show");
+    editor.classList.remove("show");
+    document.body.classList.remove("editor-open");
+    if(inpPromo) inpPromo.value = "";
+    if(inpLogo) inpLogo.value = "";
+  }
+
+  openBtn.addEventListener("click", openEditor);
+  hotspot.addEventListener("click", openEditor);
+  closeBtn.addEventListener("click", closeEditor);
+  overlay.addEventListener("click", closeEditor);
+
+  // ✅ preview en vivo
+  inpPhone.addEventListener("input", () => {
+    maskPreview.textContent = "Vista: " + maskPhoneFromAny(inpPhone.value);
+  });
+
+  btnRotate.addEventListener("click", () => {
+    const r = random3();
+    inpCode.value = r;
+    setCodeFromString(r);
+  });
+
+  function getNowValues(){
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = pad2(now.getMonth()+1);
+    const dd = pad2(now.getDate());
+    const h24 = now.getHours();
+    const min = pad2(now.getMinutes());
+    const mer = h24 >= 12 ? "pm" : "am";
+    const hhmm = `${pad2(h24)}:${min}`;
+    return {
+      dateISO: `${yyyy}-${mm}-${dd}`,
+      dateES: toSpanishDate(`${yyyy}-${mm}-${dd}`),
+      timeDisplay: formatTime12(hhmm, mer),
+      mer
+    };
+  }
+
+  btnSave.addEventListener("click", async () => {
+    errBox.classList.remove("show");
+
+    const name = inpName.value.trim() || nameText.textContent;
+    const amountNum = inpAmount.value;
+    const amount = amountNum ? String(amountNum).replace(/\.00$/, "") : amountText.textContent;
+
+    // ✅ celular: escribes normal pero guardamos masked
+    if(!validPhoneMin3(inpPhone.value)){
+      errBox.classList.add("show");
+      return;
+    }
+    const phoneMasked = maskPhoneFromAny(inpPhone.value);
+
+    let date = dateText.textContent;
+    let time = timeText.textContent;
+
+    const useNow = inpNow.value === "yes";
+    if(useNow){
+      const n = getNowValues();
+      date = n.dateES;
+      time = n.timeDisplay;
+    }else{
+      date = inpDate.value ? toSpanishDate(inpDate.value) : dateText.textContent;
+      const t24 = inpTime.value;
+      const mer = inpMer.value;
+      time = t24 ? formatTime12(t24, mer) : timeText.textContent;
+    }
+
+    const op = (inpOp.value || opNumber.textContent).trim();
+    const code = setCodeFromString(inpCode.value || `${code1.textContent}${code2.textContent}${code3.textContent}`);
+
+    nameText.textContent = name;
+    amountText.textContent = amount;
+    phoneText.textContent = phoneMasked;     // ✅ siempre *** *** 566
+    dateText.textContent = date;
+    timeText.textContent = time;
+    opNumber.textContent = op;
+
+    const hideEdit = inpHide.value;
+    if(hideEdit === "yes") openBtn.classList.add("hidden");
+    else openBtn.classList.remove("hidden");
+
+    const state = { name, amount, phoneMasked, date, time, op, code, hideEdit, useNow: inpNow.value };
+
+    if(inpPromo && inpPromo.files && inpPromo.files[0]){
+      const dataUrl = await readFileAsDataURL(inpPromo.files[0]);
+      promoImg.src = dataUrl;
+      state.promoDataUrl = dataUrl;
+    }
+
+    if(inpLogo && inpLogo.files && inpLogo.files[0]){
+      const dataUrl = await readFileAsDataURL(inpLogo.files[0]);
+      logoImg.src = dataUrl;
+      state.logoDataUrl = dataUrl;
+    }
+
+    persist(state);
+    closeEditor();
+  });
+
+  if(btnShot) btnShot.addEventListener("click", async () => {
+    const toHide = [editor, overlay, openBtn];
+    toHide.forEach(el => el.classList.add("hide-for-shot"));
+    document.body.classList.remove("editor-open");
+
+    await new Promise(r => setTimeout(r, 80));
+
+    const canvas = await html2canvas(captureArea, {
+      backgroundColor: null,
+      scale: 2,
+      useCORS: true
+    });
+
+    const link = document.createElement("a");
+    link.download = "comprobante.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+
+    toHide.forEach(el => el.classList.remove("hide-for-shot"));
+    document.body.classList.add("editor-open");
+  });
+
+  btnReset.addEventListener("click", resetAll);
+
+  loadPersisted();
+
+  let t;
+  function soften(){
+    openBtn.classList.add("soft");
+    clearTimeout(t);
+    t = setTimeout(()=>openBtn.classList.remove("soft"), 800);
+  }
+  openBtn.addEventListener("mousemove", soften);
+})();
+</script>
+<!-- ===== BLOQUEO CON CONTRASEÑA (NO MODIFICA TU DISEÑO) ===== -->
+
+<div id="loginOverlay" style="
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.65);
+backdrop-filter:blur(8px);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:9999;
+">
+
+  <div style="
+  background:#ffffff;
+  width:90%;
+  max-width:340px;
+  border-radius:20px;
+  padding:25px;
+  box-shadow:0 15px 40px rgba(0,0,0,.35);
+  text-align:center;
+  font-family:Inter,sans-serif;
+  ">
+
+    <h2 style="margin-bottom:15px;color:#6a238a;">Acceso al Panel</h2>
+
+    <input id="userInput" type="text" placeholder="Usuario"
+    style="width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;margin-bottom:12px;font-size:15px;">
+
+    <input id="passInput" type="password" placeholder="Contraseña"
+    style="width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;margin-bottom:15px;font-size:15px;">
+
+    <button onclick="checkLogin()" style="
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    background:#18b394;
+    color:white;
+    font-weight:700;
+    font-size:15px;
+    ">
+    Ingresar
+    </button>
+<div style="margin-top:15px;text-align:center;">
+  <a href="https://wa.me/51942978154?text=Hola%20Soyner%2C%20necesito%20acceso%20al%20panel"
+     target="_blank"
+     style="
+     display:inline-block;
+     background:#25D366;
+     color:#fff;
+     padding:10px 12px;
+     border-radius:10px;
+     text-decoration:none;
+     font-weight:600;
+     font-size:14px;">
+     Contactar por WhatsApp
+  </a>
+</div>
+    <p id="errorMsg" style="color:red;margin-top:10px;font-size:13px;display:none;">
+    Datos incorrectos
+    </p>
+
+    <p style="margin-top:15px;font-size:12px;color:#666;">
+    Soporte WhatsApp: 942978154
+    </p>
+
+  </div>
+</div>
+
+<script>
+function checkLogin(){
+  const user = document.getElementById("userInput").value;
+  const pass = document.getElementById("passInput").value;
+
+  if(user === "sonyer" && pass === "3842"){
+      document.getElementById("loginOverlay").style.display = "none";
+  } else {
+      document.getElementById("errorMsg").style.display = "block";
+  }
+}
+</script>
+</body>
+</html>
